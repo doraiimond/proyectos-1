@@ -1,31 +1,30 @@
-version: '3.8'
-
 services:
 
   mysql:
     image: mysql:8
     container_name: mysql_db
-
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: testdb
-
+      MYSQL_DATABASE: bdd
     ports:
       - "3306:3306"
-
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
-    build: .
+    build:
+      context: "./proyecto-semestral/back-Ventas_SpringBoot/Springboot-API-REST"
     container_name: spring_app
-
     ports:
       - "8080:8080"
-
     depends_on:
-      - mysql
-
+      mysql:
+        condition: service_healthy
     environment:
       DB_ENDPOINT: mysql
       DB_PORT: 3306
