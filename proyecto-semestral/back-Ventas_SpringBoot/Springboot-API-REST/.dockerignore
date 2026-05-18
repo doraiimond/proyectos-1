@@ -5,7 +5,6 @@
 *.log
 
 # Ignora dependencias locales
-target/
 .mvn/
 .settings/
 
