@@ -1,20 +1,15 @@
 # ─────────────────────────────────────────
-# S3 - FRONTEND REACT
+# S3 - FRONTEND ESTÁTICO
 # ─────────────────────────────────────────
-resource "aws_s3_bucket" "frontend" {
-  bucket        = "proyecto-frontend-${random_id.bucket_id.hex}"
-  force_destroy = true
-  tags = { Name = "proyecto-frontend" }
-}
 
-resource "random_id" "bucket_id" {
+resource "random_id" "bucket_suffix" {
   byte_length = 4
 }
 
-resource "aws_s3_bucket_website_configuration" "frontend" {
-  bucket = aws_s3_bucket.frontend.id
-  index_document { suffix = "index.html" }
-  error_document { key = "index.html" }
+resource "aws_s3_bucket" "frontend" {
+  bucket        = "proyecto-frontend-${random_id.bucket_suffix.hex}"
+  force_destroy = true
+  tags          = { Name = "frontend-bucket" }
 }
 
 resource "aws_s3_bucket_public_access_block" "frontend" {
@@ -25,17 +20,33 @@ resource "aws_s3_bucket_public_access_block" "frontend" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "frontend" {
+resource "aws_s3_bucket_website_configuration" "frontend" {
   bucket = aws_s3_bucket.frontend.id
+  index_document { suffix = "index.html" }
+  error_document { key = "index.html" }
+}
+
+resource "aws_s3_bucket_policy" "frontend_public" {
+  bucket     = aws_s3_bucket.frontend.id
+  depends_on = [aws_s3_bucket_public_access_block.frontend]
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Sid       = "PublicReadGetObject"
+      Sid       = "PublicRead"
       Effect    = "Allow"
       Principal = "*"
       Action    = "s3:GetObject"
       Resource  = "${aws_s3_bucket.frontend.arn}/*"
     }]
   })
-  depends_on = [aws_s3_bucket_public_access_block.frontend]
+}
+
+terraform {
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
 }
