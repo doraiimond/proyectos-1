@@ -1,4 +1,13 @@
-FROM eclipse-temurin:17-jdk-alpine
+# ETAPA 1 - Build con Maven
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
 WORKDIR /app
-COPY target/*.jar app.jar
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# ETAPA 2 - Solo el jar
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
