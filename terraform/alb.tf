@@ -43,13 +43,13 @@ resource "aws_lb_target_group" "tg_despachos" {
 
 resource "aws_lb_target_group_attachment" "ventas" {
   target_group_arn = aws_lb_target_group.tg_ventas.arn
-  target_id = aws_instance.back_ventas.id
+  target_id        = aws_instance.backend["ventas"].id
   port             = 8080
 }
 
 resource "aws_lb_target_group_attachment" "despachos" {
   target_group_arn = aws_lb_target_group.tg_despachos.arn
-  target_id = aws_instance.back_despachos.id
+  target_id        = aws_instance.backend["despachos"].id
   port             = 8081
 }
 
