@@ -42,3 +42,14 @@ resource "aws_s3_bucket_policy" "frontend_public" {
   })
 }
 
+resource "aws_ecr_repository" "back_ventas" {
+  name         = "proyecto-back-ventas"
+  force_delete = true
+  tags         = { Name = "ecr-back-ventas" }
+}
+
+resource "aws_ecr_repository" "back_despachos" {
+  name         = "proyecto-back-despachos"
+  force_delete = true
+  tags         = { Name = "ecr-back-despachos" }
+}
