@@ -18,7 +18,7 @@ resource "aws_lb_target_group" "tg_ventas" {
   vpc_id   = aws_vpc.main.id
 
   health_check {
-    path                = "/api/v1/ventas"
+    path                = "/actuator/health"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
@@ -33,7 +33,7 @@ resource "aws_lb_target_group" "tg_despachos" {
   vpc_id   = aws_vpc.main.id
 
   health_check {
-    path                = "/api/v1/despachos"
+    path                = "/actuator/health"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
@@ -75,7 +75,7 @@ resource "aws_lb_listener_rule" "despachos" {
 
   condition {
     path_pattern {
-      values = ["/api/v1/despachos*"]
+      values = ["/despachos/*", "/despacho/*"]
     }
   }
 }

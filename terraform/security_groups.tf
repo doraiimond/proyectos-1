@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────
 
 resource "aws_security_group" "sg_alb" {
-  name        = "proyecto-alb-sg"
+  name        = "sg-alb"
   description = "ALB: acepta trafico HTTP publico"
   vpc_id      = aws_vpc.main.id
 
@@ -21,26 +21,26 @@ resource "aws_security_group" "sg_alb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "proyecto-alb-sg" }
+  tags = { Name = "sg-alb" }
 }
 
 resource "aws_security_group" "sg_backend" {
-  name        = "proyecto-backend-sg"
+  name        = "sg-backend"
   description = "EC2 backends: 8080, 8081 desde ALB; SSH desde internet"
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.sg_alb.id]
   }
 
   ingress {
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 8081
+    to_port         = 8081
+    protocol        = "tcp"
+    security_groups = [aws_security_group.sg_alb.id]
   }
 
   ingress {
@@ -57,11 +57,11 @@ resource "aws_security_group" "sg_backend" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "proyecto-backend-sg" }
+  tags = { Name = "sg-backend" }
 }
 
 resource "aws_security_group" "sg_rds" {
-  name        = "proyecto-rds-sg"
+  name        = "sg-rds"
   description = "RDS MySQL: solo desde las EC2"
   vpc_id      = aws_vpc.main.id
 
@@ -79,5 +79,5 @@ resource "aws_security_group" "sg_rds" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "proyecto-rds-sg" }
+  tags = { Name = "sg-rds" }
 }
