@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────
-# PROVIDER & BACKEND
+# PROVIDER
 # ─────────────────────────────────────────
 
 terraform {
@@ -10,14 +10,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-  }
-
-  # Estado remoto en S3 (creado manualmente una sola vez antes del primer apply)
-  # Instrucciones: ver README.md
-  backend "s3" {
-    bucket = "proyecto-terraform-state"
-    key    = "proyecto-semestral/terraform.tfstate"
-    region = "us-east-1"
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
   }
 }
 

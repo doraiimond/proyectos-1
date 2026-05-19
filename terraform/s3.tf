@@ -41,12 +41,3 @@ resource "aws_s3_bucket_policy" "frontend_public" {
     }]
   })
 }
-
-terraform {
-  required_providers {
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.0"
-    }
-  }
-}
