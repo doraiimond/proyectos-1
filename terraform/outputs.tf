@@ -17,12 +17,12 @@ output "frontend_url" {
 
 output "ec2_ventas_ip" {
   description = "IP pública EC2 ventas"
-  value       = aws_instance.backend["ventas"].public_ip
+  value       = aws_instance.back_ventas.public_ip
 }
 
 output "ec2_despachos_ip" {
   description = "IP pública EC2 despachos"
-  value       = aws_instance.backend["despachos"].public_ip
+  value       = aws_instance.back_despachos.public_ip
 }
 
 output "rds_endpoint" {
