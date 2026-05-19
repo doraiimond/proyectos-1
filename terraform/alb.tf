@@ -1,18 +1,16 @@
 # ─────────────────────────────────────────
-# ALB - APPLICATION LOAD BALANCER
+# APPLICATION LOAD BALANCER
 # ─────────────────────────────────────────
+
 resource "aws_lb" "alb" {
   name               = "proyecto-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.sg_alb.id]
   subnets            = [aws_subnet.publica_1.id, aws_subnet.publica_2.id]
-  tags = { Name = "proyecto-alb" }
+  tags               = { Name = "proyecto-alb" }
 }
 
-# ─────────────────────────────────────────
-# TARGET GROUPS
-# ─────────────────────────────────────────
 resource "aws_lb_target_group" "tg_ventas" {
   name     = "tg-ventas"
   port     = 8080
@@ -21,14 +19,10 @@ resource "aws_lb_target_group" "tg_ventas" {
 
   health_check {
     path                = "/api/v1/ventas"
-<<<<<<< HEAD
     interval            = 30
     timeout             = 5
-=======
->>>>>>> parent of fa3219c (ksajdkajsdksa)
     healthy_threshold   = 2
     unhealthy_threshold = 3
-    interval            = 30
   }
 }
 
@@ -40,45 +34,25 @@ resource "aws_lb_target_group" "tg_despachos" {
 
   health_check {
     path                = "/api/v1/despachos"
-<<<<<<< HEAD
     interval            = 30
     timeout             = 5
-=======
->>>>>>> parent of fa3219c (ksajdkajsdksa)
     healthy_threshold   = 2
     unhealthy_threshold = 3
-    interval            = 30
   }
 }
 
-# ─────────────────────────────────────────
-# REGISTRAR EC2 EN TARGET GROUPS
-# ─────────────────────────────────────────
 resource "aws_lb_target_group_attachment" "ventas" {
   target_group_arn = aws_lb_target_group.tg_ventas.arn
-<<<<<<< HEAD
   target_id = aws_instance.back_ventas.id
-=======
-  target_id        = aws_instance.back_ventas.id
->>>>>>> parent of fa3219c (ksajdkajsdksa)
   port             = 8080
 }
 
 resource "aws_lb_target_group_attachment" "despachos" {
   target_group_arn = aws_lb_target_group.tg_despachos.arn
-<<<<<<< HEAD
   target_id = aws_instance.back_despachos.id
-=======
-  target_id        = aws_instance.back_despachos.id
->>>>>>> parent of fa3219c (ksajdkajsdksa)
   port             = 8081
 }
 
-# ─────────────────────────────────────────
-# LISTENER - rutas por path
-# /api/v1/ventas    → back ventas
-# /api/v1/despachos → back despachos
-# ─────────────────────────────────────────
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 80
