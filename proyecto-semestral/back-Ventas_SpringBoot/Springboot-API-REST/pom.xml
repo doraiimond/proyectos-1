@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.38</version>
+			<version>1.18.36</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -79,43 +79,19 @@
 		</dependency>
 	</dependencies>
 
-		<build>
-			<resources>
-				<resource>
-					<directory>src/main/resources</directory>
-					<filtering>false</filtering>
-				</resource>
-			</resources>
-			<plugins>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-					<configuration>
-						<excludes>
-							<exclude>
-								<groupId>org.projectlombok</groupId>
-								<artifactId>lombok</artifactId>
-							</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-
-				<!-- AGREGA ESTE PLUGIN -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<annotationProcessorPaths>
-							<path>
-								<groupId>org.projectlombok</groupId>
-								<artifactId>lombok</artifactId>
-								<version>1.18.38</version>
-							</path>
-						</annotationProcessorPaths>
-					</configuration>
-				</plugin>
-
-			</plugins>
-		</build>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
