@@ -1,4 +1,4 @@
-name: Build and Deploy to EKS
+name: Terraform + Deploy EKS
 
 on:
   push:
@@ -8,16 +8,13 @@ on:
 env:
   AWS_REGION: us-east-1
   EKS_CLUSTER: innovatech-eks
-  ECR_BACKEND_VENTAS: backend-ventas
-  ECR_BACKEND_DESPACHOS: backend-despachos
-  ECR_FRONTEND: frontend-despacho
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Configurar credenciales AWS
@@ -26,69 +23,113 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: us-east-1
+
+      # -------------------------
+      # TERRAFORM
+      # -------------------------
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: infra/terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: infra/terraform
+        run: terraform apply -auto-approve
+
+      - name: Esperar EKS
+        run: |
+          aws eks wait cluster-active \
+            --name innovatech-eks \
+            --region us-east-1
+
+      # -------------------------
+      # ECR
+      # -------------------------
 
       - name: Login ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      # -------------------------
+      # BACKEND VENTAS
+      # -------------------------
+
       - name: Build Backend Ventas
         run: |
           docker build \
-          -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_BACKEND_VENTAS }}:latest \
+          -t ${{ steps.login-ecr.outputs.registry }}/backend-ventas:latest \
           ./backend/back-Ventas_SpringBoot/Springboot-API-REST
 
       - name: Push Backend Ventas
         run: |
           docker push \
-          ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_BACKEND_VENTAS }}:latest
+          ${{ steps.login-ecr.outputs.registry }}/backend-ventas:latest
+
+      # -------------------------
+      # BACKEND DESPACHOS
+      # -------------------------
 
       - name: Build Backend Despachos
         run: |
           docker build \
-          -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_BACKEND_DESPACHOS }}:latest \
+          -t ${{ steps.login-ecr.outputs.registry }}/backend-despachos:latest \
           ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
 
       - name: Push Backend Despachos
         run: |
           docker push \
-          ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_BACKEND_DESPACHOS }}:latest
+          ${{ steps.login-ecr.outputs.registry }}/backend-despachos:latest
+
+      # -------------------------
+      # FRONTEND
+      # -------------------------
 
       - name: Build Frontend
         run: |
           docker build \
-          -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_FRONTEND }}:latest \
+          -t ${{ steps.login-ecr.outputs.registry }}/frontend-despacho:latest \
           ./frontend/front_despacho
 
       - name: Push Frontend
         run: |
           docker push \
-          ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_FRONTEND }}:latest
+          ${{ steps.login-ecr.outputs.registry }}/frontend-despacho:latest
 
-      - name: Configurar kubectl
+      # -------------------------
+      # KUBERNETES
+      # -------------------------
+
+      - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig \
-            --region $AWS_REGION \
-            --name $EKS_CLUSTER
+            --region us-east-1 \
+            --name innovatech-eks
 
-      - name: Aplicar manifests Kubernetes
+      - name: Verificar conexión EKS
+        run: kubectl get nodes
+
+      - name: Aplicar manifiestos
         run: |
           kubectl apply -f infra/k8s/
 
-      - name: Reiniciar deployments
+      - name: Reiniciar Deployments
         run: |
           kubectl rollout restart deployment/backend-ventas
           kubectl rollout restart deployment/backend-despacho
           kubectl rollout restart deployment/frontend
 
-      - name: Esperar rollout backend ventas
+      - name: Esperar Backend Ventas
         run: |
           kubectl rollout status deployment/backend-ventas --timeout=300s
 
-      - name: Esperar rollout backend despacho
+      - name: Esperar Backend Despacho
         run: |
           kubectl rollout status deployment/backend-despacho --timeout=300s
 
-      - name: Esperar rollout frontend
+      - name: Esperar Frontend
         run: |
           kubectl rollout status deployment/frontend --timeout=300s
