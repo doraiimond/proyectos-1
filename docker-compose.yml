@@ -38,7 +38,7 @@ services:
       retries: 5
 
   backend-despachos:
-    build: ./backend/Springboot-API-REST-DESPACHO
+    build: ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
     image: innovatech-backend-despachos:1.0
     container_name: innovatech-backend-despachos
     restart: always
@@ -57,7 +57,7 @@ services:
       - innovatech-net
 
   backend-ventas:
-    build: ./backend/Springboot-API-REST-VENTAS
+    build: ./backend/back-Ventas_SpringBoot/Springboot-API-REST
     image: innovatech-backend-ventas:1.0
     container_name: innovatech-backend-ventas
     restart: always
@@ -76,7 +76,7 @@ services:
       - innovatech-net
 
   frontend:
-    build: ./front_despacho
+    build: ./frontend/front_despacho
     image: innovatech-frontend:1.0
     container_name: innovatech-frontend
     restart: always

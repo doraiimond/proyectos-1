@@ -1,0 +1,41 @@
+#Despliegue
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-despacho
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-despacho
+  template:
+    metadata:
+      labels:
+        app: backend-despacho
+    spec:
+      containers:
+        - name: backend-despacho
+          image: backend-despacho-innovatech:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/innovatech
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: root
+---
+#Service:
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-despacho
+spec:
+  selector:
+    app: backend-despacho
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP

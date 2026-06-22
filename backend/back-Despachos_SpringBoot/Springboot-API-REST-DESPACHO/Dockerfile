@@ -7,6 +7,5 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk AS runner
 WORKDIR /app
 COPY --from=builder /build/target/*.jar app.jar
-COPY entrypoint.sh /entrypoint.sh
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]
