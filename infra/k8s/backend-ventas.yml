@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend-ventas
-          image: backend-ventas-innovatech:latest
+          image: 540835374667.dkr.ecr.us-east-1.amazonaws.com/backend-ventas
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend-despacho
-          image: backend-despacho-innovatech:latest
+          image: 540835374667.dkr.ecr.us-east-1.amazonaws.com/backend-despachos
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

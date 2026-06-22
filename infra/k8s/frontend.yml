@@ -15,8 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: frontend-innovatech:latest
-          #no descargar la imagen desde Docker Hub, sinó que local.
+          image: 540835374667.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
