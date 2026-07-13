@@ -1,1 +1,19 @@
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.*
+infra/terraform/*.tfvars
+infra/terraform/crash.log
+infra/terraform/kubectl
 
+# Backend (Maven)
+backend/**/target/
+
+# Frontend (Vite/Node)
+frontend/**/node_modules/
+frontend/**/dist/
+frontend/**/dist_output/
+
+# Env files con secretos
+.env
+.env.local
