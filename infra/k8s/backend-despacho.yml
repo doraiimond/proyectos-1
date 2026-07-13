@@ -1,4 +1,4 @@
-#Despliegue
+# Despliegue
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,19 +15,24 @@ spec:
     spec:
       containers:
         - name: backend-despacho
-          image: 540835374667.dkr.ecr.us-east-1.amazonaws.com/backend-despachos
+          # AWS_ACCOUNT_ID se sustituye via envsubst en el pipeline CI/CD
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/backend-despachos:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql:3306/innovatech
-            - name: SPRING_DATASOURCE_USERNAME
+            - name: DB_ENDPOINT
+              value: mysql-despachos
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: innovatech_despachos
+            - name: DB_USERNAME
               value: root
-            - name: SPRING_DATASOURCE_PASSWORD
+            - name: DB_PASSWORD
               value: root
 ---
-#Service:
+# Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -36,6 +41,6 @@ spec:
   selector:
     app: backend-despacho
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 8081        # ✅ corregido: el backend corre en 8081 (application.properties)
+      targetPort: 8081
   type: ClusterIP

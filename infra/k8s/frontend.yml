@@ -1,4 +1,4 @@
-#Despliegue
+# Despliegue
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,12 +15,13 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 540835374667.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+          # AWS_ACCOUNT_ID se sustituye via envsubst en el pipeline CI/CD
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/frontend-despacho:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
 ---
-#Service:
+# Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -31,7 +32,5 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      #Puerto expuesto en el nodo de kubernet:
       nodePort: 30080
-  #NodePort: expone el servicio fuera de cluster kubernet:
-  type: LoadBalancer #LoadBalancer: balanceador de carga de una red
+  type: LoadBalancer
