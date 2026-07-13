@@ -43,4 +43,4 @@ spec:
   ports:
     - port: 8081        # ✅ corregido: el backend corre en 8081 (application.properties)
       targetPort: 8081
-  type: ClusterIP
+  type: LoadBalancer

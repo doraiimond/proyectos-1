@@ -1,4 +1,4 @@
-# Despliegue
+#Despliegue
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,8 +15,7 @@ spec:
     spec:
       containers:
         - name: backend-ventas
-          # AWS_ACCOUNT_ID se sustituye via envsubst en el pipeline CI/CD
-          image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/backend-ventas:latest
+          image: 975050162000.dkr.ecr.us-east-1.amazonaws.com/backend-ventas
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -32,7 +31,7 @@ spec:
             - name: DB_PASSWORD
               value: root
 ---
-# Service
+#Service:
 apiVersion: v1
 kind: Service
 metadata:
@@ -43,4 +42,4 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
-  type: ClusterIP
+  type: LoadBalancer
